@@ -8,6 +8,7 @@
     "start": "NODE_ENV=production PORT=3030 node index.js",
     "dev": "nodemon index.js",
     "seed:plans": "node scripts/seedSubscriptionPlans.js",
+    "db:setup": "node -e \"console.log('Run server/supabase/schema.sql in your Supabase SQL Editor, then npm run seed:plans')\"",
     "test": "jest"
   },
   "author": "Muhammad Ahsan",
@@ -16,6 +17,7 @@
     "nodemon": "^3.1.10"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "cookie-parser": "^1.4.7",
@@ -27,7 +29,6 @@
     "express": "^4.21.2",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.15.1",
     "nodemailer": "^7.0.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"

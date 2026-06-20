@@ -8,8 +8,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import database from "./config/db.js";
-import "./models/index.js";
+import "./config/db.js";
 import swaggerSpecs from "./config/swagger.js";
 import authRouter from "./routes/authRouter.js";
 import ErrorHandler from "./utils/errorHandler.js";
@@ -21,8 +20,6 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;
-
-database.on("error", console.error.bind(console, "Database connection error:"));
 
 app.use(
   cors({

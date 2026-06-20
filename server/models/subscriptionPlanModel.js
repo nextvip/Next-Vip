@@ -1,82 +1,61 @@
-import mongoose from "mongoose";
+import { supabase } from "../config/supabase.js";
+import { fromDbRow } from "../lib/rowMapper.js";
 
-const subscriptionPlanSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Plan name is required"],
-      trim: true,
-    },
-    slug: {
-      type: String,
-      required: [true, "Plan slug is required"],
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    description: {
-      type: String,
-      trim: true,
-    },
-    price_monthly: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    price_yearly: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    stripe_price_id_monthly: {
-      type: String,
-    },
-    stripe_price_id_yearly: {
-      type: String,
-    },
-    max_videos: {
-      type: Number,
-      default: 0,
-    },
-    max_automations: {
-      type: Number,
-      default: 0,
-    },
-    max_connected_accounts: {
-      type: Number,
-      default: 0,
-    },
-    max_scheduled_posts: {
-      type: Number,
-      default: 0,
-    },
-    ai_generations_per_month: {
-      type: Number,
-      default: 0,
-    },
-    features: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {},
-    },
-    is_active: {
-      type: Boolean,
-      default: true,
-    },
-    sort_order: {
-      type: Number,
-      default: 0,
-    },
+const TABLE = "subscription_plans";
+
+const mapPlanRow = (row) => {
+  if (!row) return null;
+  const plan = fromDbRow(row);
+  plan.price_monthly = row.price_monthly != null ? Number(row.price_monthly) : 0;
+  plan.price_yearly = row.price_yearly != null ? Number(row.price_yearly) : 0;
+  plan.is_active = row.is_active;
+  plan.sort_order = row.sort_order;
+  return plan;
+};
+
+const SubscriptionPlan = {
+  async findOneAndUpdate(filters, update, options = {}) {
+    const { data: existing, error: findError } = await supabase
+      .from(TABLE)
+      .select("*")
+      .eq("slug", filters.slug)
+      .maybeSingle();
+
+    if (findError) {
+      throw new Error(findError.message);
+    }
+
+    if (existing) {
+      const { data, error } = await supabase
+        .from(TABLE)
+        .update(update)
+        .eq("id", existing.id)
+        .select("*")
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return mapPlanRow(data);
+    }
+
+    if (options.upsert) {
+      const { data, error } = await supabase
+        .from(TABLE)
+        .insert(update)
+        .select("*")
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return mapPlanRow(data);
+    }
+
+    return null;
   },
-  {
-    timestamps: true,
-  }
-);
-
-subscriptionPlanSchema.index({ is_active: 1, sort_order: 1 });
-
-const SubscriptionPlan = mongoose.model(
-  "SubscriptionPlan",
-  subscriptionPlanSchema
-);
+};
 
 export default SubscriptionPlan;

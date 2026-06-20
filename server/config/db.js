@@ -1,29 +1,22 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+import { supabase } from "./supabase.js";
 
-dotenv.config();
+const verifyConnection = async () => {
+  const { error } = await supabase.from("users").select("id").limit(1);
 
-mongoose.set("strictQuery", false);
+  if (error) {
+    if (error.code === "PGRST205" || error.message?.includes("does not exist")) {
+      console.warn(
+        "Supabase connected, but tables are missing. Run server/supabase/schema.sql in the Supabase SQL editor."
+      );
+      return;
+    }
+    console.error("Supabase connection error:", error.message);
+    return;
+  }
 
-const DB_OPTIONS = {
-  dbName: process.env.DB_NAME,
+  console.log("Supabase database connected successfully");
 };
 
-// Ensure DB_CONNECTION is defined
-if (!process.env.DB_CONNECTION) {
-  console.error("DB_CONNECTION is not defined in .env file!");
-  process.exit(1);
-}
+verifyConnection();
 
-mongoose
-  .connect(process.env.DB_CONNECTION, DB_OPTIONS)
-  .then(() => {
-    console.log("Database connected successfully");
-  })
-  .catch((err) => {
-    console.log("Connection Error: ", err.message);
-  });
-
-const db = mongoose.connection;
-
-export default db;
+export default supabase;
