@@ -6,16 +6,30 @@
   margin: 0;
 }
 
-/**************** customize scrollbar ****************/
-::-webkit-scrollbar {
-  width: 5px;
-  height: 8px;
-  color: #000;
+/**************** customize scrollbar — NextVIP theme ****************/
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8b5cf6 #ede9fe;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ede9fe;
+  border-radius: 10px;
+}
+
 ::-webkit-scrollbar-thumb {
-  background-color: #fb7c05;
+  background: linear-gradient(180deg, #a78bfa 0%, #7c3aed 50%, #6366f1 100%);
   border-radius: 10px;
   cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%);
 }
 
 .simplebar-placeholder {

@@ -221,7 +221,7 @@ CREATE TABLE IF NOT EXISTS publications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   video_id UUID NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
-  connected_account_id UUID NOT NULL REFERENCES connected_social_accounts(id) ON DELETE CASCADE,
+  connected_account_id UUID REFERENCES connected_social_accounts(id) ON DELETE SET NULL,
   platform TEXT NOT NULL CHECK (platform IN ('tiktok', 'instagram', 'facebook', 'youtube')),
   platform_post_id TEXT,
   post_url TEXT,

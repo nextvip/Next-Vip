@@ -1,114 +1,136 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import BrandLogo from "../../common/BrandLogo";
+import { getUser } from "../../../store/auth/authSlice";
+
+const navLinks = [
+  { label: "Features", target: "features", scroll: true },
+  { label: "How it works", target: "how-it-works", scroll: true },
+  { label: "Pricing", target: "pricing", scroll: true },
+  { label: "FAQ", target: "faq", scroll: true },
+];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated } = useSelector(getUser);
 
-  const menuItems = [
-    { label: "Section 1", target: "section-1", isScroll: true },
-    { label: "Section 2", target: "section-2", isScroll: true },
-    { label: "Page 1", path: "/page_1" },
-    { label: "Page 2", path: "/page_2" },
-  ];
-
-  const handleNavClick = (e, item) => {
-    if (item.isScroll) {
-      e.preventDefault();
-
-      if (location.pathname === "/") {
-        // If already on home, just scroll
-        const el = document.getElementById(item.target);
-        if (el) {
-          const yOffset = -80;
-          const y = el.getBoundingClientRect().top + window.scrollY + yOffset;
-          window.scrollTo({ top: y, behavior: "smooth" });
-          setIsMenuOpen(false);
-        }
-      } else {
-        // If on another page, go to home and scroll
-        navigate("/", { state: { scrollTo: item.target } });
+  const scrollTo = (e, target) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    if (location.pathname === "/") {
+      const el = document.getElementById(target);
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: y, behavior: "smooth" });
       }
+    } else {
+      navigate("/", { state: { scrollTo: target } });
     }
   };
 
   return (
-    <nav className="z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <img src="/assets/images/logo.png" alt="logo" width="150" />
-          </Link>
+        <div className="flex items-center justify-between h-16 lg:h-20">
+          <BrandLogo size="sm" />
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            {menuItems.map((item) =>
-              item.isScroll ? (
+          <nav className="hidden lg:flex items-center gap-8">
+            {navLinks.map(({ label, target, scroll }) =>
+              scroll ? (
                 <a
-                  key={item.label}
-                  href={`/#${item.target}`}
-                  onClick={(e) => handleNavClick(e, item)}
-                  className="text-gray-600 hover:text-gray-900 font-medium"
+                  key={label}
+                  href={`/#${target}`}
+                  onClick={(e) => scrollTo(e, target)}
+                  className="text-sm font-medium text-slate-600 hover:text-violet-600 transition-colors"
                 >
-                  {item.label}
+                  {label}
                 </a>
               ) : (
                 <Link
-                  key={item.label}
-                  to={item.path}
-                  className="text-gray-600 hover:text-gray-900 font-medium"
+                  key={label}
+                  to={target}
+                  className="text-sm font-medium text-slate-600 hover:text-violet-600 transition-colors"
                 >
-                  {item.label}
+                  {label}
                 </Link>
               )
             )}
+          </nav>
+
+          <div className="hidden lg:flex items-center gap-3">
+            {isAuthenticated ? (
+              <Button asChild className="bg-violet-600 hover:bg-violet-500">
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" asChild className="text-slate-600">
+                  <Link to="/login">Log in</Link>
+                </Button>
+                <Button asChild className="bg-violet-600 hover:bg-violet-500 shadow-md shadow-violet-600/20">
+                  <Link to="/register">Sign up free</Link>
+                </Button>
+              </>
+            )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
+            type="button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-gray-600 hover:text-gray-900"
+            className="lg:hidden p-2 text-slate-600"
+            aria-label="Menu"
           >
-            {isMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
-        {/* Mobile Dropdown */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t">
-            <div className="flex flex-col space-y-4">
-              {menuItems.map((item) =>
-                item.isScroll ? (
-                  <a
-                    key={item.label}
-                    href={`/#${item.target}`}
-                    onClick={(e) => handleNavClick(e, item)}
-                    className="text-gray-600 hover:text-gray-900 font-medium px-4"
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={item.label}
-                    to={item.path}
-                    className="text-gray-600 hover:text-gray-900 font-medium px-4"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                )
+          <div className="lg:hidden py-4 border-t space-y-1">
+            {navLinks.map(({ label, target, scroll }) =>
+              scroll ? (
+                <a
+                  key={label}
+                  href={`/#${target}`}
+                  onClick={(e) => scrollTo(e, target)}
+                  className="block px-2 py-2 text-slate-600 font-medium"
+                >
+                  {label}
+                </a>
+              ) : (
+                <Link
+                  key={label}
+                  to={target}
+                  className="block px-2 py-2 text-slate-600 font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {label}
+                </Link>
+              )
+            )}
+            <div className="pt-4 flex flex-col gap-2 px-2">
+              {isAuthenticated ? (
+                <Button asChild className="w-full bg-violet-600">
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" asChild className="w-full">
+                    <Link to="/login">Log in</Link>
+                  </Button>
+                  <Button asChild className="w-full bg-violet-600">
+                    <Link to="/register">Sign up free</Link>
+                  </Button>
+                </>
               )}
             </div>
           </div>
         )}
       </div>
-    </nav>
+    </header>
   );
 }
