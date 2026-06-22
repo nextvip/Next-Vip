@@ -8,10 +8,12 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import database from "./config/db.js";
-import "./models/index.js";
+import "./config/db.js";
 import swaggerSpecs from "./config/swagger.js";
 import authRouter from "./routes/authRouter.js";
+import videoRouter from "./routes/videoRouter.js";
+import publicationRouter from "./routes/publicationRouter.js";
+import subscriptionRouter from "./routes/subscriptionRouter.js";
 import ErrorHandler from "./utils/errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,8 +23,6 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080;
-
-database.on("error", console.error.bind(console, "Database connection error:"));
 
 app.use(
   cors({
@@ -48,6 +48,9 @@ app.use(
 );
 
 app.use("/api/auth", authRouter);
+app.use("/api/videos", videoRouter);
+app.use("/api/publications", publicationRouter);
+app.use("/api/subscriptions", subscriptionRouter);
 
 // Serve client build if it exists, otherwise show API info
 const clientDistPath = path.join(__dirname, "../client/dist");

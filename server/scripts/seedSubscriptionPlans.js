@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 import SubscriptionPlan from "../models/subscriptionPlanModel.js";
+import "../config/db.js";
 
 dotenv.config();
 
@@ -69,19 +69,14 @@ const DEFAULT_PLANS = [
 ];
 
 const seedPlans = async () => {
-  await mongoose.connect(process.env.DB_CONNECTION, {
-    dbName: process.env.DB_NAME,
-  });
-
   for (const plan of DEFAULT_PLANS) {
     await SubscriptionPlan.findOneAndUpdate({ slug: plan.slug }, plan, {
       upsert: true,
       new: true,
     });
-    console.log(`Seeded plan: ${plan.name}`);
+    console.log(`Seeded plan: ${ plan.name }`);
   }
 
-  await mongoose.disconnect();
   console.log("Subscription plans seeded successfully.");
 };
 

@@ -7,40 +7,47 @@ import sendMail from "../utils/sendMail.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import sendToken from "../utils/jwtToken.js";
 import User from "../models/userModel.js";
+import { assignFreePlanToUser, getUserPlan } from "../services/subscriptionService.js";
+
+const rollbackUserRegistration = async (userId) => {
+  if (!userId) return;
+  try {
+    await User.deleteOne({ id: userId });
+  } catch (error) {
+    console.error("Failed to rollback user registration:", error);
+  }
+};
 
 // Register user
 export const register = catchAsyncError(async (req, res, next) => {
+  const { name, email, password, confirmPassword } = req.body;
+
+  if (!validator.validate(email)) {
+    return next(new ErrorHandler("Invalid email", 400));
+  }
+
+  if (password !== confirmPassword) {
+    return next(
+      new ErrorHandler("Password and Confirm Password does not match!", 400)
+    );
+  }
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return next(new ErrorHandler("Email already exists", 400));
+  }
+
+  let userId = null;
+
   try {
-    const { name, email, password, confirmPassword } = req.body;
-
-    if (!validator.validate(email)) {
-      return next(new ErrorHandler("Invalid email", 400));
-    }
-
-    if (password !== confirmPassword) {
-      return next(
-        new ErrorHandler("Password and Confirm Password does not match!", 400)
-      );
-    }
-
-    // Check for unique email
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return next(new ErrorHandler("Email already exists", 400));
-    }
-
-    // Create user directly
-    const user = new User({
-      name,
-      email,
-      password,
-    });
-
+    const user = new User({ name, email, password });
     await user.save();
+    userId = user._id || user.id;
 
-    // Generate 6-digit verification code
+    await assignFreePlanToUser(userId);
+
     const verificationCode = user.getVerificationCode(15);
-    await user.save({ validateBeforeSave: false });
+    await user.save();
 
     try {
       await sendMail({
@@ -53,18 +60,22 @@ export const register = catchAsyncError(async (req, res, next) => {
           expiresInMinutes: 15,
         },
       });
-
-      res.status(201).json({
-        success: true,
-        message: `Please check your email: ${user.email} for your 6-digit verification code to activate your account!`,
-      });
-    } catch (error) {
-      // Rollback user creation if email fails
-      await User.deleteOne({ _id: user._id });
-      return next(new ErrorHandler("Unable to send verification email", 400));
+    } catch {
+      throw new ErrorHandler("Unable to send verification email", 400);
     }
+
+    return res.status(201).json({
+      success: true,
+      message: `Please check your email: ${user.email} for your 6-digit verification code to activate your account!`,
+    });
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    await rollbackUserRegistration(userId);
+
+    if (error instanceof ErrorHandler) {
+      return next(error);
+    }
+
+    return next(new ErrorHandler(error.message || "Registration failed", 400));
   }
 });
 
@@ -220,9 +231,12 @@ export const getUserInfo = catchAsyncError(async (req, res, next) => {
       return next(new ErrorHandler("User not found", 404));
     }
 
+    const plan = await getUserPlan(userId);
+
     res.status(200).json({
       success: true,
       user,
+      plan,
     });
   } catch (error) {
     return next(new ErrorHandler(error.message, 400));
@@ -308,7 +322,7 @@ export const forgotPassword = catchAsyncError(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     // Send reset email
-    const resetLink = `${process.env.CLIENT_BASE_URL}/api/auth/reset-password?token=${resetToken}`;
+    const resetLink = `${process.env.CLIENT_BASE_URL}/reset-password?token=${resetToken}`;
 
     try {
       await sendMail({

@@ -1,162 +1,91 @@
-import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Twitter, Linkedin, Github } from "lucide-react";
+import BrandLogo from "../../common/BrandLogo";
 
 export default function Footer() {
   const navigate = useNavigate();
   const location = useLocation();
-  const currentYear = new Date().getFullYear();
+  const year = new Date().getFullYear();
+  const tagline =
+    import.meta.env.VITE_REACT_APP_PROJECT_TAGLINE ||
+    "Automate your content from upload to monetization.";
 
-  const sections = [
-    {
-      title: "Category 1",
-      links: [
-        { label: "Section 1", scrollTo: "section-1" },
-        { label: "Page 1", path: "/page_1" },
-        { label: "Page 2", path: "/page_2" },
-      ],
-    },
-    {
-      title: "Category 2",
-      links: [
-        { label: "Page 3", path: "/page_3" },
-        { label: "Page 4", path: "/page_4" },
-        { label: "Page 5", path: "/page_5" },
-      ],
-    },
-    {
-      title: "Category 3",
-      links: [
-        { label: "Page 6", path: "/page_6" },
-        { label: "Page 7", path: "/page_7" },
-        { label: "Page 8", path: "/page_8" },
-      ],
-    },
-  ];
-
-  const handleScrollLink = (e, sectionId) => {
+  const scrollTo = (e, id) => {
     e.preventDefault();
-
     if (location.pathname === "/") {
-      const el = document.getElementById(sectionId);
+      const el = document.getElementById(id);
       if (el) {
-        const yOffset = -80;
-        const y = el.getBoundingClientRect().top + window.scrollY + yOffset;
+        const y = el.getBoundingClientRect().top + window.scrollY - 80;
         window.scrollTo({ top: y, behavior: "smooth" });
       }
     } else {
-      navigate("/", { state: { scrollTo: sectionId } });
+      navigate("/", { state: { scrollTo: id } });
     }
   };
 
+  const productLinks = [
+    { label: "Features", id: "features" },
+    { label: "How it works", id: "how-it-works" },
+    { label: "Pricing", id: "pricing" },
+    { label: "FAQ", id: "faq" },
+  ];
+
   return (
-    <footer className="bg-white border-t">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
-          {/* Logo and Description */}
-          <div className="col-span-2">
-            <Link to="/" className="flex items-center space-x-2">
-              <img src="/assets/images/logo.png" alt="logo" width="150" />
-            </Link>
-            <p className="mt-4 text-gray-600 max-w-sm">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry.
+    <footer className="bg-slate-950 text-slate-400 border-t border-slate-800">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+          <div className="md:col-span-2 space-y-4">
+            <BrandLogo size="default" variant="light" />
+            <p className="text-sm leading-relaxed max-w-sm text-slate-500">{tagline}</p>
+            <p className="text-xs text-slate-600">
+              AI-powered SaaS for creators, affiliates, and businesses — TikTok, Instagram,
+              Facebook & YouTube.
             </p>
-            <div className="flex space-x-4 mt-6">
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-gray-500"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-gray-500"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-gray-500"
-              >
-                <Github className="w-5 h-5" />
-              </a>
-            </div>
           </div>
 
-          {/* Navigation Sections */}
-          {sections.map((section) => (
-            <div key={section.title}>
-              <h3 className="font-semibold text-gray-900 mb-4">
-                {section.title}
-              </h3>
-              <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.label}>
-                    {link.scrollTo ? (
-                      <a
-                        href={`/#${link.scrollTo}`}
-                        onClick={(e) => handleScrollLink(e, link.scrollTo)}
-                        className="text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link
-                        to={link.path}
-                        className="text-gray-600 hover:text-gray-900 transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div>
+            <h3 className="text-sm font-semibold text-white mb-4">Product</h3>
+            <ul className="space-y-3 text-sm">
+              {productLinks.map(({ label, id }) => (
+                <li key={label}>
+                  <a
+                    href={`/#${id}`}
+                    onClick={(e) => scrollTo(e, id)}
+                    className="hover:text-violet-400 transition-colors"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+              <li>
+                <Link to="/login" className="hover:text-violet-400 transition-colors">
+                  Log in
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold text-white mb-4">Account</h3>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <Link to="/register" className="hover:text-violet-400 transition-colors">
+                  Sign up free
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard" className="hover:text-violet-400 transition-colors">
+                  Dashboard
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-8 pt-8 border-t">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-sm">
-              © {currentYear} {import.meta.env.VITE_REACT_APP_PROJECT_NAME} All
-              rights reserved. Powered by{" "}
-              <a
-                href="https://www.linkedin.com/in/ahsan"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700"
-              >
-                Ahsan
-              </a>
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link
-                to="/privacy"
-                className="text-gray-500 hover:text-gray-900 text-sm"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                to="/terms"
-                className="text-gray-500 hover:text-gray-900 text-sm"
-              >
-                Terms of Service
-              </Link>
-              <Link
-                to="/security"
-                className="text-gray-500 hover:text-gray-900 text-sm"
-              >
-                Security
-              </Link>
-            </div>
+        <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between gap-4 text-xs text-slate-600">
+          <p>© {year} NextVIP. All rights reserved.</p>
+          <div className="flex gap-6">
+            <span>Privacy</span>
+            <span>Terms</span>
           </div>
         </div>
       </div>
