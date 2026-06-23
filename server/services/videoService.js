@@ -1,6 +1,10 @@
 import { supabase } from "../config/supabase.js";
 import { fromDbRow } from "../lib/rowMapper.js";
 import { getUserPlan } from "./subscriptionService.js";
+import {
+  deleteVideoFromStorage,
+  getStoragePathFromUrl,
+} from "./storageService.js";
 
 const mapVideo = (row) => {
   if (!row) return null;
@@ -11,6 +15,7 @@ const mapVideo = (row) => {
   video.thumbnail_url = row.thumbnail_url;
   video.folder_id = row.folder_id;
   video.default_affiliate_product_id = row.default_affiliate_product_id;
+  video.metadata = row.metadata || {};
   return video;
 };
 
@@ -86,6 +91,22 @@ export const updateVideo = async (userId, videoId, payload) => {
 };
 
 export const deleteVideo = async (userId, videoId) => {
+  const video = await getVideoById(userId, videoId);
+  if (!video) {
+    throw new Error("Video not found");
+  }
+
+  const storagePath =
+    video.metadata?.storage_path || getStoragePathFromUrl(video.file_url);
+
+  if (storagePath) {
+    try {
+      await deleteVideoFromStorage(storagePath);
+    } catch (error) {
+      console.error("Failed to delete video from storage:", error.message);
+    }
+  }
+
   const { error } = await supabase
     .from("videos")
     .delete()

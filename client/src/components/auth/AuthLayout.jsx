@@ -59,6 +59,7 @@ export default function AuthLayout({ title, description, children, footer, minim
                   <TypewriterText
                     words={authTypeWords}
                     className="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-fuchsia-300 to-violet-400"
+                    cursorClassName="bg-violet-300"
                   />
                 </span>
                 <span className="block mt-1 text-center text-white">and monetized</span>

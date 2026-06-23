@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Video, Upload, History, Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { LoadingDots } from "../../../components/common/LoadingState";
 import { getMySubscription } from "../../../services/subscriptionServices";
 import { getVideos } from "../../../services/videoServices";
 import { getPublications } from "../../../services/publicationServices";
@@ -74,7 +75,9 @@ export default function DashboardOverview() {
               <Icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{loading ? "..." : value}</div>
+              <div className="text-2xl font-bold min-h-[2rem] flex items-center">
+                {loading ? <LoadingDots size="md" /> : value}
+              </div>
               <Link to={link} className="text-xs text-primary hover:underline mt-2 inline-block">
                 View details →
               </Link>

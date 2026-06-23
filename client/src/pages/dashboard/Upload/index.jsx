@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileVideo, Link2, Loader2, Upload } from "lucide-react";
+import { FileVideo, Link2, Upload } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { uploadVideo, createVideoLink } from "../../../services/videoServices";
+import { ButtonLoading } from "../../../components/common/LoadingState";
 
 const VIDEO_ACCEPT = "video/mp4,video/webm,video/quicktime,video/x-msvideo";
 
@@ -215,11 +216,13 @@ export default function VideoUploadPage() {
                   disabled={loading || !isFileFormValid}
                 >
                   {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <ButtonLoading label="Uploading" />
                   ) : (
-                    <Upload className="h-4 w-4 mr-2" />
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload video
+                    </>
                   )}
-                  Upload video
                 </Button>
 
                 {!isFileFormValid && !loading && (
@@ -270,11 +273,13 @@ export default function VideoUploadPage() {
                   disabled={loading || !isLinkFormValid}
                 >
                   {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <ButtonLoading label="Saving" />
                   ) : (
-                    <Link2 className="h-4 w-4 mr-2" />
+                    <>
+                      <Link2 className="h-4 w-4 mr-2" />
+                      Save video
+                    </>
                   )}
-                  Save video
                 </Button>
                 {!isLinkFormValid && !loading && (
                   <p className="text-xs text-muted-foreground">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Loader2, Mail, ShieldCheck } from "lucide-react";
+import { Mail, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import AuthLayout, { AuthError, AuthSuccess } from "../../../components/auth/Aut
 import AuthPageHeader from "../../../components/auth/AuthPageHeader";
 import OtpInput from "../../../components/auth/OtpInput";
 import AuthSubmitButton from "../../../components/auth/AuthSubmitButton";
+import { ButtonLoading } from "../../../components/common/LoadingState";
 import {
   authInputClassName,
   authLabelClassName,
@@ -151,11 +152,13 @@ export default function Activate() {
           disabled={resendLoading || !hasEmail}
         >
           {resendLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            <ButtonLoading label="Sending" dotClassName="bg-violet-600" />
           ) : (
-            <ShieldCheck className="h-4 w-4 mr-2" />
+            <>
+              <ShieldCheck className="h-4 w-4 mr-2" />
+              Resend code
+            </>
           )}
-          Resend code
         </Button>
       </form>
     </AuthLayout>

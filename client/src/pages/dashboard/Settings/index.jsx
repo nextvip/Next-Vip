@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Check, Crown, Loader2, Shield, User } from "lucide-react";
+import { Check, Crown, Shield, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { getMe, updateProfile, updatePassword } from "../../../services/authServices";
 import { getPlans } from "../../../services/subscriptionServices";
 import { setUser, getUser } from "../../../store/auth/authSlice";
+import { ButtonLoading } from "../../../components/common/LoadingState";
 
 export default function SettingsPage() {
   const { userData, token } = useSelector(getUser);
@@ -132,11 +133,13 @@ export default function SettingsPage() {
                 disabled={profileLoading || !name.trim()}
               >
                 {profileLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <ButtonLoading label="Saving" />
                 ) : (
-                  <User className="h-4 w-4 mr-2" />
+                  <>
+                    <User className="h-4 w-4 mr-2" />
+                    Save profile
+                  </>
                 )}
-                Save profile
               </Button>
             </form>
           </CardContent>
@@ -184,11 +187,13 @@ export default function SettingsPage() {
                 disabled={passwordLoading || !isPasswordValid}
               >
                 {passwordLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <ButtonLoading label="Updating" />
                 ) : (
-                  <Shield className="h-4 w-4 mr-2" />
+                  <>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Update password
+                  </>
                 )}
-                Update password
               </Button>
             </form>
           </CardContent>
@@ -218,7 +223,14 @@ export default function SettingsPage() {
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {plans.map((p) => {
               const isCurrent = plan?.slug === p.slug;
-              const isPopular = p.slug === "pro";
+              const isPopular = p.slug === "popular";
+              const durationDays = p.features?.duration_days;
+              const videosPerDay = p.features?.videos_per_day ?? p.max_videos;
+              const priceLabel =
+                p.price_monthly === 0
+                  ? "Free"
+                  : `$${p.price_monthly}`;
+              const periodLabel = durationDays ? ` / ${durationDays} days` : "";
               return (
                 <div
                   key={p._id || p.id}
@@ -241,13 +253,17 @@ export default function SettingsPage() {
                   <p className="font-bold text-lg">{p.name}</p>
                   <p className="text-sm text-muted-foreground mt-1 min-h-[40px]">{p.description}</p>
                   <p className="text-2xl font-bold mt-3">
-                    ${p.price_monthly}
-                    <span className="text-sm font-normal text-muted-foreground">/mo</span>
+                    {priceLabel}
+                    <span className="text-sm font-normal text-muted-foreground">{periodLabel}</span>
                   </p>
                   <ul className="text-sm text-muted-foreground mt-4 space-y-2 flex-1">
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-violet-600 shrink-0" />
-                      {p.max_videos || "∞"} videos
+                      {videosPerDay} videos/day
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-violet-600 shrink-0" />
+                      All platforms
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-violet-600 shrink-0" />

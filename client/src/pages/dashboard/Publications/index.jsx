@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { getPublications, createPublication } from "../../../services/publicationServices";
 import { getVideos } from "../../../services/videoServices";
+import { PublicationTableSkeleton } from "../../../components/dashboard/TableSkeletons";
 
 const platforms = ["tiktok", "instagram", "facebook", "youtube"];
 
@@ -171,11 +172,7 @@ export default function PublicationsPage() {
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  Loading...
-                </TableCell>
-              </TableRow>
+              <PublicationTableSkeleton rows={4} />
             ) : publications.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">

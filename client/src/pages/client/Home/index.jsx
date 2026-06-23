@@ -19,6 +19,8 @@ import {
   Quote,
   Play,
   Send,
+  Crown,
+  Flame,
 } from "lucide-react";
 import SEO from "../../../components/common/SEO";
 import TypewriterText from "../../../components/common/TypewriterText";
@@ -68,12 +70,12 @@ const steps = [
   {
     num: "01",
     title: "Connect your platforms",
-    desc: "Link TikTok, Instagram, Facebook, and YouTube via official OAuth APIs.",
+    desc: "Link TikTok, Instagram, Facebook, and YouTube.",
   },
   {
     num: "02",
-    title: "Upload your video once",
-    desc: "Add a file or import from a link. AI adapts titles and captions per network.",
+    title: "Import & republish",
+    desc: "NextVIP pulls your TikTok videos and publishes them to Facebook, Instagram, and YouTube Shorts. You can also upload a file or import from a link — titles and captions are adapted per platform.",
   },
   {
     num: "03",
@@ -229,9 +231,42 @@ const features = [
 ];
 
 const plans = [
-  { name: "Free", price: "$0", desc: "Basic access, limited automations", videos: "5 videos" },
-  { name: "Pro", price: "$29", desc: "Full automation, all platforms", videos: "100 videos", popular: true },
-  { name: "Business", price: "$79", desc: "Higher limits & priority support", videos: "Unlimited" },
+  {
+    name: "Free Trial",
+    price: "$0",
+    period: "7 days",
+    desc: "Try NextVIP free on every platform",
+    videosPerDay: 10,
+    popular: false,
+    icon: Sparkles,
+    tag: "No card required",
+  },
+  {
+    name: "Standard",
+    price: "$40",
+    period: "15 days",
+    desc: "Great for consistent publishing",
+    videosPerDay: 10,
+    popular: false,
+    icon: Zap,
+    tag: "Best for starters",
+  },
+  {
+    name: "Popular",
+    price: "$59",
+    period: "30 days",
+    desc: "Best value for scaling creators",
+    videosPerDay: 30,
+    popular: true,
+    icon: Crown,
+    tag: "Most chosen",
+  },
+];
+
+const planFeatures = [
+  "TikTok, Instagram, Facebook & YouTube",
+  "Comment automation",
+  "Affiliate links",
 ];
 
 const faqs = [
@@ -249,7 +284,7 @@ const faqs = [
   },
   {
     q: "Is there a free plan?",
-    a: "Yes. Start free with basic limits. Upgrade to Pro or Business when you need more videos, automations, and connected accounts.",
+    a: "Yes. Start with a 7-day free trial — publish up to 10 videos per day on all platforms. Upgrade to Standard ($40/15 days) or Popular ($59/30 days) when you're ready to scale.",
   },
 ];
 
@@ -341,6 +376,7 @@ export default function Home() {
               <TypewriterText
                 words={heroTypeWords}
                 className="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-fuchsia-300 to-violet-400"
+                cursorClassName="bg-violet-300"
               />
               <br className="hidden sm:block" />
               <span className="sm:ml-0"> and monetized</span>
@@ -435,18 +471,155 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing — second section, above features */}
+      <section id="pricing" className="relative py-24 lg:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-violet-50/40 to-white" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-violet-300/20 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-200/25 rounded-full blur-[100px] pointer-events-none" />
+        <div
+          className="absolute inset-0 opacity-[0.4]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+            maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
+          }}
+        />
+
+        <div className="container relative mx-auto px-4">
+          <div className="text-center max-w-2xl mx-auto mb-16 lg:mb-20">
+            <div className="inline-flex items-center gap-2 rounded-full border border-violet-200/80 bg-white/80 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-violet-700 shadow-sm mb-6">
+              <Flame className="h-3.5 w-3.5 text-violet-500" />
+              Pricing
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight mb-4">
+              Simple, transparent{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600">
+                pricing
+              </span>
+            </h2>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              Start with 7 days free. Upgrade when you&apos;re ready to scale.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-5 lg:gap-6 max-w-6xl mx-auto items-stretch">
+            {plans.map(({ name, price, period, desc, videosPerDay, popular, icon: PlanIcon, tag }) => (
+              <div
+                key={name}
+                className={`group relative flex flex-col ${
+                  popular ? "md:-mt-2 md:mb-2 z-10" : ""
+                }`}
+              >
+                <div
+                  className={`relative flex flex-col h-full rounded-2xl p-8 transition-all duration-300 bg-white/90 backdrop-blur-xl group-hover:-translate-y-1 ${
+                    popular
+                      ? "border-2 border-violet-500 shadow-xl shadow-violet-500/15 ring-1 ring-violet-500/30 group-hover:shadow-violet-500/25"
+                      : "border border-slate-200/80 shadow-lg shadow-slate-200/50 group-hover:border-violet-200 group-hover:shadow-xl group-hover:shadow-violet-500/10"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-6">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 shadow-sm shadow-violet-500/10">
+                      <PlanIcon className="h-5 w-5 text-violet-600" />
+                    </div>
+                    {popular ? (
+                      <Badge className="bg-violet-600 hover:bg-violet-600 border-0 text-white">
+                        Most popular
+                      </Badge>
+                    ) : (
+                      <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+                        {tag}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="text-xl font-bold text-slate-900">{name}</h3>
+                  <p className="text-sm mt-1.5 mb-6 leading-relaxed text-muted-foreground">{desc}</p>
+
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-5xl font-bold tracking-tight text-slate-900">{price}</span>
+                      <span className="text-sm font-medium text-muted-foreground">/ {period}</span>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl p-4 mb-6 bg-gradient-to-br from-violet-50 to-indigo-50/80 border border-violet-100/80">
+                    <p className="text-2xl font-bold text-violet-700">
+                      {videosPerDay}
+                      <span className="text-sm font-medium ml-1.5 text-violet-600/80">videos/day</span>
+                    </p>
+                    <p className="text-xs mt-1 text-muted-foreground">All platforms included</p>
+                  </div>
+
+                  <ul className="space-y-3 mb-8 flex-1">
+                    {planFeatures.map((f) => (
+                      <li key={f} className="flex items-start gap-3 text-sm">
+                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-600">
+                          <Check className="h-3 w-3" />
+                        </span>
+                        <span className="text-slate-600">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    asChild
+                    size="lg"
+                    className={
+                      popular
+                        ? "w-full rounded-full h-12 bg-violet-600 hover:bg-violet-500 text-white border-0 shadow-lg shadow-violet-600/25 font-semibold"
+                        : "w-full rounded-full h-12 border-violet-200 text-violet-700 bg-white hover:bg-violet-50 hover:border-violet-300 font-semibold shadow-sm"
+                    }
+                    variant={popular ? "default" : "outline"}
+                  >
+                    <Link to="/register">
+                      Get started
+                      <ArrowRight className="h-4 w-4 ml-1" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground mt-12 max-w-lg mx-auto">
+            All plans include multi-platform publishing. No hidden fees — cancel anytime.
+          </p>
+        </div>
+      </section>
+
       {/* Feature sections */}
       <section id="features" className="relative overflow-hidden">
-        <div className="text-center max-w-2xl mx-auto px-4 pt-20 pb-4 lg:pt-28">
-          <Badge variant="outline" className="mb-4 border-violet-200 bg-violet-50 text-violet-700">
-            Platform features
-          </Badge>
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4">
-            Everything you need to scale content
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            Upload once, publish everywhere, and turn engagement into revenue — automatically.
-          </p>
+        <div className="relative py-16 lg:py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-violet-50/30 to-white" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[320px] bg-violet-200/20 rounded-full blur-[100px] pointer-events-none" />
+          <div
+            className="absolute inset-0 opacity-[0.35]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px)",
+              backgroundSize: "48px 48px",
+              maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
+            }}
+          />
+
+          <div className="container relative mx-auto px-4">
+            <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto">
+              <div className="inline-flex items-center justify-center gap-2 rounded-full border border-violet-200/80 bg-white/80 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-violet-700 shadow-sm mb-6">
+                <Sparkles className="h-3.5 w-3.5 text-violet-500" />
+                Platform features
+              </div>
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight mb-4 text-center">
+                Everything you need to{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600">
+                  scale content
+                </span>
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed max-w-xl mx-auto">
+                Upload once, publish everywhere, and turn engagement into revenue — automatically.
+              </p>
+            </div>
+          </div>
         </div>
 
         {features.map(({ id, badge, title, desc, icon: Icon, bullets, mock, reverse }, index) => (
@@ -551,54 +724,6 @@ export default function Home() {
                 <span className="text-5xl font-bold text-violet-100">{num}</span>
                 <h3 className="text-xl font-semibold mt-4 mb-2">{title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="py-20 lg:py-28 bg-slate-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Simple, transparent pricing</h2>
-            <p className="text-muted-foreground">Start free. Upgrade when you&apos;re ready to scale.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {plans.map(({ name, price, desc, videos, popular }) => (
-              <div
-                key={name}
-                className={`rounded-2xl border bg-white p-8 flex flex-col ${
-                  popular ? "border-violet-500 shadow-xl shadow-violet-500/10 ring-1 ring-violet-500" : ""
-                }`}
-              >
-                {popular && (
-                  <Badge className="w-fit mb-4 bg-violet-600">Most popular</Badge>
-                )}
-                <h3 className="text-xl font-bold">{name}</h3>
-                <p className="text-muted-foreground text-sm mt-1 mb-4">{desc}</p>
-                <p className="text-4xl font-bold mb-1">
-                  {price}
-                  <span className="text-base font-normal text-muted-foreground">/mo</span>
-                </p>
-                <p className="text-sm text-muted-foreground mb-6">{videos}</p>
-                <ul className="space-y-2 mb-8 flex-1">
-                  {["Multi-platform publishing", "Comment automation", "Affiliate links"].map(
-                    (f) => (
-                      <li key={f} className="flex items-center gap-2 text-sm">
-                        <Check className="h-4 w-4 text-violet-600 shrink-0" />
-                        {f}
-                      </li>
-                    )
-                  )}
-                </ul>
-                <Button
-                  asChild
-                  className={popular ? "bg-violet-600 hover:bg-violet-500" : ""}
-                  variant={popular ? "default" : "outline"}
-                >
-                  <Link to="/register">Get started</Link>
-                </Button>
               </div>
             ))}
           </div>

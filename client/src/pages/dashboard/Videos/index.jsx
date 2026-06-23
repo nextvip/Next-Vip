@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getVideos, deleteVideo } from "../../../services/videoServices";
+import VideoThumbnail from "../../../components/dashboard/VideoThumbnail";
+import { VideoTableSkeleton } from "../../../components/dashboard/TableSkeletons";
 
 const statusColors = {
   draft: "secondary",
@@ -74,6 +76,7 @@ export default function VideosPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[110px]">Preview</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
@@ -83,14 +86,10 @@ export default function VideosPage() {
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  Loading...
-                </TableCell>
-              </TableRow>
+              <VideoTableSkeleton rows={5} />
             ) : videos.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   No videos yet.{" "}
                   <Link to="/dashboard/upload" className="text-primary hover:underline">
                     Upload your first video
@@ -100,6 +99,14 @@ export default function VideosPage() {
             ) : (
               videos.map((video) => (
                 <TableRow key={video._id || video.id}>
+                  <TableCell>
+                    <VideoThumbnail
+                      fileUrl={video.file_url}
+                      sourceUrl={video.source_url}
+                      thumbnailUrl={video.thumbnail_url}
+                      title={video.title}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium">{video.title || "Untitled"}</TableCell>
                   <TableCell className="capitalize">{video.source_type}</TableCell>
                   <TableCell>

@@ -6,12 +6,12 @@ import {
   createVideo,
   updateVideo,
   deleteVideo,
+  assertVideoLimit,
 } from "../services/videoService.js";
-
-const getFileUrl = (req, filename) => {
-  const base = process.env.API_BASE_URL || `${req.protocol}://${req.get("host")}`;
-  return `${base}/uploads/videos/${req.user.id}/${filename}`;
-};
+import {
+  uploadVideoToStorage,
+  deleteVideoFromStorage,
+} from "../services/storageService.js";
 
 export const getVideos = catchAsyncError(async (req, res) => {
   const videos = await listVideos(req.user.id);
@@ -30,18 +30,47 @@ export const uploadVideoFile = catchAsyncError(async (req, res, next) => {
   }
 
   const { title, description } = req.body;
-  const fileUrl = getFileUrl(req, req.file.filename);
+  let uploaded = null;
 
-  const video = await createVideo(req.user.id, {
-    title: title || req.file.originalname,
-    description: description || null,
-    source_type: "upload",
-    file_url: fileUrl,
-    file_size: req.file.size,
-    status: "ready",
-  });
+  try {
+    await assertVideoLimit(req.user.id);
 
-  res.status(201).json({ success: true, video });
+    uploaded = await uploadVideoToStorage({
+      userId: req.user.id,
+      buffer: req.file.buffer,
+      mimeType: req.file.mimetype,
+      originalName: req.file.originalname,
+    });
+
+    const video = await createVideo(req.user.id, {
+      title: title || req.file.originalname,
+      description: description || null,
+      source_type: "upload",
+      file_url: uploaded.publicUrl,
+      file_size: req.file.size,
+      status: "ready",
+      metadata: {
+        storage_path: uploaded.storagePath,
+        storage_bucket: uploaded.bucket,
+      },
+    });
+
+    res.status(201).json({ success: true, video });
+  } catch (error) {
+    if (uploaded?.storagePath) {
+      try {
+        await deleteVideoFromStorage(uploaded.storagePath);
+      } catch (cleanupError) {
+        console.error("Failed to rollback uploaded video:", cleanupError.message);
+      }
+    }
+
+    return next(
+      error instanceof ErrorHandler
+        ? error
+        : new ErrorHandler(error.message || "Video upload failed", 400)
+    );
+  }
 });
 
 export const createVideoLink = catchAsyncError(async (req, res, next) => {

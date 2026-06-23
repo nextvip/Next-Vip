@@ -1,42 +1,48 @@
 import dotenv from "dotenv";
 import SubscriptionPlan from "../models/subscriptionPlanModel.js";
+import { supabase } from "../config/supabase.js";
 import "../config/db.js";
 
 dotenv.config();
 
 const DEFAULT_PLANS = [
   {
-    name: "Free",
+    name: "Free Trial",
     slug: "free",
-    description: "Basic access with limited automations",
+    description: "7 days free — 10 videos per day on all platforms",
     price_monthly: 0,
     price_yearly: 0,
-    max_videos: 5,
-    max_automations: 2,
-    max_connected_accounts: 1,
-    max_scheduled_posts: 3,
-    ai_generations_per_month: 10,
+    max_videos: 10,
+    max_automations: 5,
+    max_connected_accounts: 4,
+    max_scheduled_posts: 10,
+    ai_generations_per_month: 50,
     features: {
-      all_platforms: false,
+      duration_days: 7,
+      videos_per_day: 10,
+      all_platforms: true,
       comment_automation: true,
-      dm_automation: false,
+      dm_automation: true,
       affiliate_system: true,
       priority_support: false,
     },
     sort_order: 1,
+    is_active: true,
   },
   {
-    name: "Pro",
-    slug: "pro",
-    description: "Full automation across all platforms",
-    price_monthly: 29,
-    price_yearly: 290,
-    max_videos: 100,
-    max_automations: 50,
+    name: "Standard",
+    slug: "standard",
+    description: "15 days — 10 videos per day on all platforms",
+    price_monthly: 40,
+    price_yearly: 0,
+    max_videos: 10,
+    max_automations: 25,
     max_connected_accounts: 4,
-    max_scheduled_posts: 100,
-    ai_generations_per_month: 500,
+    max_scheduled_posts: 50,
+    ai_generations_per_month: 200,
     features: {
+      duration_days: 15,
+      videos_per_day: 10,
       all_platforms: true,
       comment_automation: true,
       dm_automation: true,
@@ -44,29 +50,34 @@ const DEFAULT_PLANS = [
       priority_support: false,
     },
     sort_order: 2,
+    is_active: true,
   },
   {
-    name: "Business",
-    slug: "business",
-    description: "Advanced features, higher limits, and priority support",
-    price_monthly: 79,
-    price_yearly: 790,
-    max_videos: 0,
-    max_automations: 0,
-    max_connected_accounts: 0,
-    max_scheduled_posts: 0,
-    ai_generations_per_month: 0,
+    name: "Popular",
+    slug: "popular",
+    description: "30 days — 30 videos per day on all platforms",
+    price_monthly: 59,
+    price_yearly: 0,
+    max_videos: 30,
+    max_automations: 50,
+    max_connected_accounts: 4,
+    max_scheduled_posts: 100,
+    ai_generations_per_month: 500,
     features: {
+      duration_days: 30,
+      videos_per_day: 30,
       all_platforms: true,
       comment_automation: true,
       dm_automation: true,
       affiliate_system: true,
       priority_support: true,
-      unlimited: true,
     },
     sort_order: 3,
+    is_active: true,
   },
 ];
+
+const LEGACY_SLUGS = ["pro", "business"];
 
 const seedPlans = async () => {
   for (const plan of DEFAULT_PLANS) {
@@ -74,7 +85,18 @@ const seedPlans = async () => {
       upsert: true,
       new: true,
     });
-    console.log(`Seeded plan: ${ plan.name }`);
+    console.log(`Seeded plan: ${plan.name}`);
+  }
+
+  const { error } = await supabase
+    .from("subscription_plans")
+    .update({ is_active: false })
+    .in("slug", LEGACY_SLUGS);
+
+  if (error) {
+    console.warn("Could not deactivate legacy plans:", error.message);
+  } else {
+    console.log("Deactivated legacy plans: pro, business");
   }
 
   console.log("Subscription plans seeded successfully.");

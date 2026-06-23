@@ -1,13 +1,16 @@
 import BrandLogo from "../BrandLogo";
+import { LoadingDots, LoadingRing } from "../LoadingState";
 
 export default function PreLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
-      <div className="flex flex-col items-center gap-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-violet-50/60">
+      <div className="flex flex-col items-center gap-5">
         <BrandLogo link={false} size="default" />
-        <div className="h-1 w-24 rounded-full bg-slate-100 overflow-hidden">
-          <div className="h-full w-1/2 rounded-full bg-violet-600 animate-pulse" />
-        </div>
+        <LoadingRing size="md" />
+        <p className="inline-flex items-center gap-2 text-sm font-medium text-slate-500">
+          Loading
+          <LoadingDots />
+        </p>
       </div>
     </div>
   );

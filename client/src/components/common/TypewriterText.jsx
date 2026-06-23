@@ -44,15 +44,16 @@ export default function TypewriterText({
 
   return (
     <span
-      className="inline-block align-bottom whitespace-nowrap text-left"
+      className="inline-flex items-baseline whitespace-nowrap"
       style={{ minWidth: `${longestWord.length}ch` }}
     >
       <span className={className}>{text}</span>
       <span
         className={cn(
-          "ml-0.5 inline-block w-[3px] h-[0.85em] translate-y-[0.08em] rounded-sm bg-violet-400 animate-pulse align-middle",
+          "ml-0.5 inline-block w-1 shrink-0 rounded-full bg-violet-500 animate-pulse align-baseline",
           cursorClassName
         )}
+        style={{ height: "0.75em" }}
         aria-hidden
       />
     </span>

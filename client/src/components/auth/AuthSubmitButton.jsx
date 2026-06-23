@@ -1,5 +1,6 @@
-import { Loader2, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ButtonLoading } from "../common/LoadingState";
 import { authSubmitClassName } from "./authStyles";
 
 export default function AuthSubmitButton({
@@ -17,9 +18,14 @@ export default function AuthSubmitButton({
       disabled={loading || disabled}
       {...props}
     >
-      {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-      {children}
-      {!loading && showArrow && <ArrowRight className="h-4 w-4" aria-hidden />}
+      {loading ? (
+        <ButtonLoading />
+      ) : (
+        <>
+          {children}
+          {showArrow && <ArrowRight className="h-4 w-4" aria-hidden />}
+        </>
+      )}
     </Button>
   );
 }
