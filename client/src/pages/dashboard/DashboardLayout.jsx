@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   X,
+  Bot,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const navItems = [
   { to: "/dashboard/videos", label: "Videos", icon: Video },
   { to: "/dashboard/upload", label: "Upload", icon: Upload },
   { to: "/dashboard/publications", label: "Publications", icon: History },
+  { to: "/dashboard/automation", label: "Automation", icon: Bot },
   { to: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
@@ -66,10 +68,10 @@ export default function DashboardLayout() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="flex">
-        <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r bg-white">
+        <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r bg-white z-50">
           <div className="p-6 border-b">
-            <BrandLogo size="sm" link={false} />
-            <p className="text-xs text-muted-foreground mt-2 truncate">
+            <BrandLogo variant="image" size="default" to="/dashboard" />
+            <p className="text-xs text-muted-foreground mt-3 truncate">
               {userData?.email}
             </p>
           </div>
@@ -85,15 +87,21 @@ export default function DashboardLayout() {
         </aside>
 
         <div className="lg:pl-64 flex-1 flex flex-col min-h-screen">
-          <header className="sticky top-0 z-40 flex items-center gap-4 border-b bg-white px-4 h-14 lg:px-8">
+          <header className="sticky top-0 z-40 flex items-center gap-3 border-b bg-white px-4 h-14 lg:px-8">
             <button
               type="button"
               className="lg:hidden p-2 -ml-2"
               onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <h1 className="font-semibold text-lg">Dashboard</h1>
+            <BrandLogo
+              variant="image"
+              size="sm"
+              to="/dashboard"
+              className="lg:hidden"
+            />
           </header>
 
           <main className="flex-1 p-4 lg:p-8">
@@ -107,8 +115,8 @@ export default function DashboardLayout() {
           <div className="fixed inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
           <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl flex flex-col">
             <div className="flex items-center justify-between p-4 border-b">
-              <BrandLogo size="sm" link={false} />
-              <button type="button" onClick={() => setMobileOpen(false)}>
+              <BrandLogo variant="image" size="sm" to="/dashboard" />
+              <button type="button" onClick={() => setMobileOpen(false)} aria-label="Close menu">
                 <X className="h-5 w-5" />
               </button>
             </div>

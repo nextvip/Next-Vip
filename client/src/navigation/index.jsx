@@ -17,8 +17,10 @@ const ResetPassword = lazy(() => import("../pages/auth/ResetPassword"));
 const DashboardLayout = lazy(() => import("../pages/dashboard/DashboardLayout"));
 const DashboardOverview = lazy(() => import("../pages/dashboard/Overview"));
 const VideosPage = lazy(() => import("../pages/dashboard/Videos"));
+const VideoDetailPage = lazy(() => import("../pages/dashboard/VideoDetail"));
 const VideoUploadPage = lazy(() => import("../pages/dashboard/Upload"));
 const PublicationsPage = lazy(() => import("../pages/dashboard/Publications"));
+const AutomationPage = lazy(() => import("../pages/dashboard/Automation"));
 const SettingsPage = lazy(() => import("../pages/dashboard/Settings"));
 
 import Header from "../components/client/Header";
@@ -65,8 +67,10 @@ export default function Navigation() {
               >
                 <Route index element={<DashboardOverview />} />
                 <Route path="videos" element={<VideosPage />} />
+                <Route path="videos/:id" element={<VideoDetailPage />} />
                 <Route path="upload" element={<VideoUploadPage />} />
                 <Route path="publications" element={<PublicationsPage />} />
+                <Route path="automation" element={<AutomationPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
 

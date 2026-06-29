@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Trash2, ExternalLink } from "lucide-react";
+import { Trash2, ExternalLink, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -107,7 +107,14 @@ export default function VideosPage() {
                       title={video.title}
                     />
                   </TableCell>
-                  <TableCell className="font-medium">{video.title || "Untitled"}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link
+                      to={`/dashboard/videos/${video._id || video.id}`}
+                      className="hover:text-primary hover:underline"
+                    >
+                      {video.title || "Untitled"}
+                    </Link>
+                  </TableCell>
                   <TableCell className="capitalize">{video.source_type}</TableCell>
                   <TableCell>
                     <Badge variant={statusColors[video.status] || "secondary"}>
@@ -120,6 +127,11 @@ export default function VideosPage() {
                       : "—"}
                   </TableCell>
                   <TableCell className="text-right space-x-2">
+                    <Button variant="ghost" size="icon" asChild title="AI content">
+                      <Link to={`/dashboard/videos/${video._id || video.id}`}>
+                        <Sparkles className="h-4 w-4 text-violet-600" />
+                      </Link>
+                    </Button>
                     {(video.file_url || video.source_url) && (
                       <Button variant="ghost" size="icon" asChild>
                         <a

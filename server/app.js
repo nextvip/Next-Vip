@@ -14,6 +14,8 @@ import authRouter from "./routes/authRouter.js";
 import videoRouter from "./routes/videoRouter.js";
 import publicationRouter from "./routes/publicationRouter.js";
 import subscriptionRouter from "./routes/subscriptionRouter.js";
+import aiRouter from "./routes/aiRouter.js";
+import automationRouter from "./routes/automationRouter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +50,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/videos", videoRouter);
 app.use("/api/publications", publicationRouter);
 app.use("/api/subscriptions", subscriptionRouter);
+app.use("/api/ai", aiRouter);
+app.use("/api/automation", automationRouter);
 
 // Local dev only — Vercel serves the client build from client/dist via CDN
 const clientDistPath = path.join(__dirname, "../client/dist");

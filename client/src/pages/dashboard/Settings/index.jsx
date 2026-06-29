@@ -282,9 +282,6 @@ export default function SettingsPage() {
               );
             })}
           </div>
-          <p className="text-xs text-muted-foreground mt-6">
-            Stripe checkout will be available in Milestone 5.
-          </p>
         </CardContent>
       </Card>
     </div>
